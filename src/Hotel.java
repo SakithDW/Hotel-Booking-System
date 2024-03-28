@@ -1,13 +1,18 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.lang.StringTemplate.STR;
 
 public class Hotel {
+    private Map<String,Room> infoMap = new HashMap<>();
     private String hotelName;
     private String hotelID;
     private String address;
     private ArrayList<String> amenities;
     private ArrayList<Room> roomList;
+
+
 
     public Hotel(String hotelName, String hotelID, String address) {
         this.hotelName = hotelName;
@@ -15,6 +20,14 @@ public class Hotel {
         this.address = address;
         this.amenities = new ArrayList<>();
         this.roomList = new ArrayList<>();
+    }
+
+    public Map<String, Room> getInfoMap() {
+        return infoMap;
+    }
+
+    public void setInfoMap(Map<String, Room> infoMap) {
+        this.infoMap = infoMap;
     }
 
     public String getHotelName() {

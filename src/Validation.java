@@ -36,6 +36,7 @@ public class Validation {
             }
         }
     }
+
     public static String stringValidator(String prompt,String pattern){
         while (true){
             Pattern stringPattern = Pattern.compile(pattern,Pattern.CASE_INSENSITIVE);
@@ -48,11 +49,7 @@ public class Validation {
             System.out.println("Invalid Input. Please re-enter.");
         }
     }
-    public static String IDGenerator(String startingChar,int IDLength){
-        ArrayList<String> IDList = new ArrayList<>();
-        for(Hotel hotel: SystemAdmin.hotelList){
-            IDList.add(hotel.getHotelID());
-        }
+    public static String IDGenerator(String startingChar,int IDLength,ArrayList<String>IDList){
         StringBuilder productID = new StringBuilder();
         productID.append(startingChar).append(" - ");
         Random random = new Random();
@@ -63,6 +60,38 @@ public class Validation {
             }
         }
         return productID.toString();
+    }
+    public static String enterRoomCategory(){
+        System.out.print("Enter room category(Standard, Deluxe, Premium): ");
+        String category = input.next();
+        while (true){
+            if (category.equalsIgnoreCase("Standard") ||
+                    category.equalsIgnoreCase("Deluxe") ||
+                    category.equalsIgnoreCase("Premium")) {
+                break;
+            }
+            else{
+                System.out.println("Invalid input.");
+            }
+        }
+        return category;
+    }
+
+    public static String enterCapacity(){
+        System.out.print("Enter capacity(Single, Double, Family): ");
+        String capacity = input.next();
+        while (true){
+            if (capacity.equalsIgnoreCase("Single") ||
+                    capacity.equalsIgnoreCase("Double") ||
+                    capacity.equalsIgnoreCase("Family")) {
+                break;
+            }
+            else{
+                System.out.println("Invalid input.");
+            }
+        }
+        return capacity;
+
     }
 
 

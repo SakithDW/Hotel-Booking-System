@@ -11,13 +11,6 @@ public abstract class Administrator {
         this.email = email;
     }
 
-    public void generateID(){
-        if(this instanceof HotelAdmin){
-            Validation.IDGenerator("H",5);
-        }
-        if (this instanceof SystemAdmin){
-            Validation.IDGenerator("S",5);
-        }
-    }
+
 
 }

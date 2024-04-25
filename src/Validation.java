@@ -61,13 +61,13 @@ public class Validation {
         }
         return productID.toString();
     }
-    public static String enterRoomCategory(){
-        System.out.print("Enter room category(Standard, Deluxe, Premium): ");
+    public static String enterOptions(String prompt, String arg1, String arg2, String arg3){
+        System.out.print(prompt);
         String category = input.next();
         while (true){
-            if (category.equalsIgnoreCase("Standard") ||
-                    category.equalsIgnoreCase("Deluxe") ||
-                    category.equalsIgnoreCase("Premium")) {
+            if (category.equalsIgnoreCase(arg1) ||
+                    category.equalsIgnoreCase(arg2) ||
+                    category.equalsIgnoreCase(arg3)) {
                 break;
             }
             else{
@@ -77,22 +77,22 @@ public class Validation {
         return category;
     }
 
-    public static String enterCapacity(){
-        System.out.print("Enter capacity(Single, Double, Family): ");
-        String capacity = input.next();
-        while (true){
-            if (capacity.equalsIgnoreCase("Single") ||
-                    capacity.equalsIgnoreCase("Double") ||
-                    capacity.equalsIgnoreCase("Family")) {
-                break;
-            }
-            else{
-                System.out.println("Invalid input.");
-            }
-        }
-        return capacity;
-
-    }
+//    public static String enterCapacity(){
+//        System.out.print("Enter capacity(Single, Double, Family): ");
+//        String capacity = input.next();
+//        while (true){
+//            if (capacity.equalsIgnoreCase("Single") ||
+//                    capacity.equalsIgnoreCase("Double") ||
+//                    capacity.equalsIgnoreCase("Family")) {
+//                break;
+//            }
+//            else{
+//                System.out.println("Invalid input.");
+//            }
+//        }
+//        return capacity;
+//
+//    }
 
 
 }

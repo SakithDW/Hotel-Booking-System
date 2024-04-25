@@ -1,4 +1,7 @@
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -6,21 +9,100 @@ public class Main {
     static ArrayList<Hotel> hotelList = new ArrayList<>();
     static ArrayList<Hotel>pendingList = new ArrayList<>();
     static ArrayList<Room> roomList = new ArrayList<>();
+    static HashMap <String,String> usersDetails = new HashMap<>();
+    static ArrayList<Customer> customerList = new ArrayList<>();
+    static ArrayList<String> IDList = new ArrayList<>();
     static ArrayList<String> amenities = new ArrayList<>();
     public static void main(String[] args) {
+        displayMenu();
+    }
+    public static void displayMenu(){
+        System.out.println("WELCOME TO NEMO");
+        String prompt=("""
+                Select Options:
+                1. Customer Portal
+                2. Hotel Admin Portal
+                3. System Admin portal
+                
+                Enter the choice(1,2,3) :
+                """);
+        int choice = Validation.intValidator(prompt,3,1);
+        if(choice==1){
+            System.out.println("WELCOME TO CUSTOMER PORTAL OF NEMO");
+            System.out.println();
+            System.out.println("Enter username");
+            String username = input.next();
+            System.out.println("Enter password");
+            String password = input.next();
+
+            if(usersDetails.containsKey(username)){
+                if(Objects.equals(password, usersDetails.get(username))){
+                    for(Hotel hotel:hotelList){
+                        System.out.println(STR."1. \{hotel.getHotelName()}:");
+                        System.out.println("Amenities : ");
+                        int count=1;
+                        for (String  amenity: hotel.getAmenities()){
+                            System.out.println(STR."\{count}. \{amenity}");
+                            count++;
+                        }
+                    }
+                    System.out.print("""
+                            1. Make a reservation.
+                            2. Cancel a reservation.
+                            3. See available rooms.
+                            4. Show reservations.
+                            5. See history
+                            0. Exit
+                            
+                            Enter the choice:
+                            """);
+                    String selection = input.next();
+//                    switch (selection){
+//                        case 1 ->
+//                    }
+                }else{
+                    System.out.println("Incorrect password.Please recheck.");
+                }
+
+            }
+            else{
+                System.out.println("Invalid username. Register before login.");
+                while(true){
+                    System.out.println("Do you want to register?(Y/N)");
+                    String preference = input.next();
+                    if(!preference.equalsIgnoreCase("Y")||preference.equalsIgnoreCase("N")){
+                        System.out.println("Invalid input.");
+                    }
+                    else {
+                        if(preference.equalsIgnoreCase("Y")){
+                            userRegistration();
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
     }
-    public static void displaymenu(){
+    public static void  userRegistration(){
+        System.out.print("Enter username: ");
+        String username = input.next();
+        String customerID = Validation.IDGenerator("C",5,IDList);
+        System.out.print("Enter a strong password: ");
+        String password = input.next();
+        System.out.print("Enter email: ");
+        String email = input.next();
+        Customer customer = new Customer(customerID,username,password,email);
+        customerList.add(customer);
+        usersDetails.put(username,password);
 
     }
 
-    public void addHotel(){
+    public static void addHotel(){
         System.out.print("Enter the name of the hotel : ");
         String hotelName = input.next();
-        ArrayList<String> IDList = new ArrayList<>();
-        for(Hotel hotel: hotelList){
-            IDList.add(hotel.getHotelID());
-        }
         String hotelID = Validation.IDGenerator("H",7,IDList);
         System.out.print("Enter the address :");
         String address = input.next();
@@ -30,34 +112,55 @@ public class Main {
         pendingList.add(hotel);
     }
 
-    public void addRooms(){
-        String type = Validation.enterRoomCategory();
+    public static void addRooms(Hotel hotel){
+        String category = Validation.enterOptions("Enter room category(Standard, Deluxe, Premium): ",
+                "Standard","Deluxe","Premium");
+        String capacity = Validation.enterOptions("Enter the room capacity(Single, Double, Family)",
+                "Single","Double","Family");
+
+        String key =category.toLowerCase()+capacity.toLowerCase();
+
+
         String startingChar;
-        if(type.equals("standard")){
+        if(category.equalsIgnoreCase("standard")){
             startingChar="SR";
-        } else if (type.equals("deluxe")) {
+        } else if (category.equalsIgnoreCase("deluxe")) {
             startingChar= "DR";
-        }
-        else {
+        }else {
             startingChar = "PR";
         }
         ArrayList<String> IDList = new ArrayList<>();
-        for(Room room: roomList){
+        for(Room room: hotel.getRoomList()){
             IDList.add(room.getRoomNo());
         }
         String roomNo= Validation.IDGenerator(startingChar,5,IDList);
-        System.out.println("Add the description :");
-        String description = input.next();
-        System.out.print("Enter the price: ");
-        double price = input.nextDouble();
-        System.out.print("Enter the room type(Standard/Deluxe/Premium): ");
 
+        System.out.print("Enter the price: ");
+        if(!hotel.getInfoMap().containsKey(key)){
+            setPriceMap(hotel);
+        }
+        String description = hotel.getInfoMap().get(key).getDescription();
+        double price = hotel.getInfoMap().get(key).getPrice();
+
+        if(category.equalsIgnoreCase("Standard")){
+            Standard standard = new Standard(roomNo,capacity,description,price,true);
+            hotel.getRoomList().add(standard);
+
+        } else if(category.equalsIgnoreCase("Deluxe")){
+            Deluxe deluxe = new Deluxe(roomNo,capacity,description,price,true);
+            hotel.getRoomList().add(deluxe);
+
+        }else if(category.equalsIgnoreCase("Premium")){
+            Premium premium = new Premium(roomNo,capacity,description,price,true);
+            hotel.getRoomList().add(premium);
+        }
     }
 
-    public ArrayList<String> enterAmenities(){
+    public static ArrayList<String> enterAmenities(){
         int count = 1;
         while(true){
             System.out.println("""
+                    
                     
                     Enter the amenities
                     Enter 'e' if all the entities are entered""");
@@ -72,7 +175,7 @@ public class Main {
     }
 
 
-    public void reviewAndAddHotel(){
+    public static void reviewAndAddHotel(){
         boolean on = true;
         while (on) {
             for (Hotel hotel : pendingList) {
@@ -98,11 +201,14 @@ public class Main {
         }
     }
 
-    public void setPriceMap(Hotel hotel){
-        String category = Validation.enterRoomCategory();
-        String capacity = Validation.enterCapacity();
+    public static void setPriceMap(Hotel hotel){
+        String category = Validation.enterOptions("Enter room category(Standard, Deluxe, Premium): ",
+                "Standard","Deluxe","Premium").toLowerCase();
+        String capacity = Validation.enterOptions("Enter the room capacity(Single, Double, Family)",
+                "Single","Double","Family").toLowerCase();
         String combinedKey = category + capacity;
         if(hotel.getInfoMap().containsKey(combinedKey)){
+            Room value = hotel.getInfoMap().get(combinedKey);
             System.out.print("This category has already defined." +
                     "\nDo you wish to edit this field.");
             String choice = input.next().toLowerCase();
@@ -110,8 +216,10 @@ public class Main {
                 System.out.println("Invalid input");
             }
             else {
-                setMap(category,capacity,hotel);
-                System.out.println("Field Updated Successfully.");
+                if(choice.equalsIgnoreCase("yes")) {
+                    setMap(category, capacity, hotel);
+                    System.out.println("Field Updated Successfully.");
+                }
             }
         }
         else{
@@ -119,75 +227,76 @@ public class Main {
             System.out.println("New Field Added Successfully.");
         }
     }
-    public void setMap(String category,String capacity,Hotel hotel){
+    public static void setMap(String category,String capacity,Hotel hotel){
         double price;
-            if(category.equals("Standard")){
-                if(capacity.equals("Single")){
+        String key = capacity.toLowerCase()+capacity.toLowerCase();
+            if(category.equalsIgnoreCase("Standard")){
+                if(capacity.equalsIgnoreCase("Single")){
                     System.out.println("Add a description: ");
                     String description = input.next();
                     price = Validation.doubleValidator("Enter the price",100000,1);
                     Standard standard = new Standard("Single",description,price);
-                    hotel.getInfoMap().put(category,standard);
+                    hotel.getInfoMap().put(key,standard);
                 }
-                else if(capacity.equals("Double")){
+                else if(capacity.equalsIgnoreCase("Double")){
                     System.out.println("Add a description: ");
                     String description = input.next();
                     price = Validation.doubleValidator("Enter the price",100000,1);
                     Standard standard = new Standard("Double",description,price);
-                    hotel.getInfoMap().put(category,standard);
+                    hotel.getInfoMap().put(key,standard);
                 }
                 else{
                     System.out.println("Add a description: ");
                     String description = input.next();
                     price = Validation.doubleValidator("Enter the price",100000,1);
                     Standard standard = new Standard("Family",description,price);
-                    hotel.getInfoMap().put(category,standard);
+                    hotel.getInfoMap().put(key,standard);
                 }
             }
-            else if(category.equals("Deluxe")){
-                if(capacity.equals("Single")){
+            else if(category.equalsIgnoreCase("Deluxe")){
+                if(capacity.equalsIgnoreCase("Single")){
                     System.out.println("Add a description: ");
                     String description = input.next();
                     price = Validation.doubleValidator("Enter the price",100000,1);
                     Deluxe deluxe = new Deluxe("Single",description,price);
-                    hotel.getInfoMap().put(category,deluxe);
+                    hotel.getInfoMap().put(key,deluxe);
                 }
-                else if(capacity.equals("Double")){
+                else if(capacity.equalsIgnoreCase("Double")){
                     System.out.println("Add a description: ");
                     String description = input.next();
                     price = Validation.doubleValidator("Enter the price",100000,1);
                     Deluxe deluxe = new Deluxe("Double",description,price);
-                    hotel.getInfoMap().put(category,deluxe);
+                    hotel.getInfoMap().put(key,deluxe);
                 }
                 else{
                     System.out.println("Add a description: ");
                     String description = input.next();
                     price = Validation.doubleValidator("Enter the price",100000,1);
                     Deluxe deluxe = new Deluxe("Family",description,price);
-                    hotel.getInfoMap().put(category,deluxe);
+                    hotel.getInfoMap().put(key,deluxe);
                 }
             }
             else{
-                if(capacity.equals("Single")){
+                if(capacity.equalsIgnoreCase("Single")){
                     System.out.println("Add a description: ");
                     String description = input.next();
                     price = Validation.doubleValidator("Enter the price",100000,1);
                     Premium premium = new Premium("Single",description,price);
-                    hotel.getInfoMap().put(category,premium);
+                    hotel.getInfoMap().put(key,premium);
                 }
-                else if(capacity.equals("Double")){
+                else if(capacity.equalsIgnoreCase("Double")){
                     System.out.println("Add a description: ");
                     String description = input.next();
                     price = Validation.doubleValidator("Enter the price",100000,1);
                     Premium premium = new Premium("Double",description,price);
-                    hotel.getInfoMap().put(category,premium);
+                    hotel.getInfoMap().put(key,premium);
                 }
                 else{
                     System.out.println("Add a description: ");
                     String description = input.next();
                     price = Validation.doubleValidator("Enter the price",100000,1);
                     Premium premium = new Premium("Family",description,price);
-                    hotel.getInfoMap().put(category,premium);
+                    hotel.getInfoMap().put(key,premium);
                 }
             }
     }

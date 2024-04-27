@@ -1,7 +1,7 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
 
 public class Main {
     static Scanner input = new Scanner(System.in);
@@ -13,16 +13,18 @@ public class Main {
     static ArrayList<Customer> customerList = new ArrayList<>();
     static ArrayList<String> customerIDList = new ArrayList<>();
     static ArrayList<String> hotelIDList = new ArrayList<>();
+    static ArrayList<String>resIDList = new ArrayList<>();
     static ArrayList<String> amenities = new ArrayList<>();
     static ArrayList<HotelAdmin> hotelAdminList = new ArrayList<>();
     static ArrayList<String> hotelAdminIDList = new ArrayList<>();
+    static ArrayList<Reservation> listOfreservations = new ArrayList<>();
     static String sysAdminUsername = "Jothipala";
     static String sysAdminPw = "1234567";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         displayMenu();
     }
-    public static void displayMenu(){
+    public static void displayMenu() throws ParseException {
         System.out.println("WELCOME TO NEMO");
         String prompt=("""
                 Select Options:
@@ -39,13 +41,14 @@ public class Main {
             String yn = input.next();
             System.out.println();
             if(yn.equalsIgnoreCase("y")){
-                System.out.println("Enter user ID");
-                String userID = input.next();
+                Customer customer=null;
+                System.out.println("Enter user email");
+                String email = input.next();
                 System.out.println("Enter password");
                 String password = input.next();
 
-                if(usersDetails.containsKey(userID)){
-                    if(Objects.equals(password, usersDetails.get(userID))){
+                if(usersDetails.containsKey(email)){
+                    if(Objects.equals(password, usersDetails.get(email))){
                         for(Hotel hotel:hotelList){
                             System.out.println(STR."1. \{hotel.getHotelName()}:");
                             System.out.println("Amenities : ");
@@ -53,6 +56,12 @@ public class Main {
                             for (String  amenity: hotel.getAmenities()){
                                 System.out.println(STR."\{count}. \{amenity}");
                                 count++;
+                            }
+                        }
+                        for(Customer customer1: customerList){
+                            if(Objects.equals(customer1.getCustomerEmail(), email)){
+                                customer=customer1;
+                                break;
                             }
                         }
                         System.out.print("""
@@ -66,9 +75,9 @@ public class Main {
                             Enter the choice:
                             """);
                         int selection = Validation.intValidator("Enter the choice :", 5, 0);
-//                    switch (selection){
-//                        case 1 ->
-//                    }
+                    switch (selection){
+                        case 1 -> makeReservation(customer);
+                    }
                     }else{
                         System.out.println("Incorrect password.Please recheck.");
                     }
@@ -207,7 +216,7 @@ public class Main {
         String email = input.next();
         Customer customer = new Customer(customerID,username,password,email);
         customerList.add(customer);
-        usersDetails.put(customerID,password);
+        usersDetails.put(email,password);
         System.out.println("Registration Successful");
         System.out.println(STR."Your user ID is\{customerID}. \nPlease keep this in mind for later use.");
 
@@ -428,7 +437,64 @@ public class Main {
                 }
             }
     }
-    public static void makeReservation(){
+    public static void makeReservation(Customer customer) throws ParseException {
+        String reservationID = Validation.IDGenerator("re",5,resIDList);
+        System.out.println("Enter the hotel name");
+        String hotelName = input.next();
+
+        String date1 = (input.next());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date checkInDate = dateFormat.parse(date1);
+
+        System.out.print("Enter check-out date(YYYY-MM-DD): ");
+        String date2 = input.next();
+        Date checkOutDate = dateFormat.parse(date2);
+
+        Hotel hotel = null;
+        Room bookedRoom = null;
+        for(Hotel hotel1: hotelList){
+            if(Objects.equals(hotel1.getHotelName(), hotelName)){
+                hotel= hotel1;
+            }
+        }
+        if (hotel==null){
+            System.out.println("Invalid hotel name");
+        }
+        else {
+            System.out.print("Enter check-in date(YYYY-MM-DD): ");
+
+
+
+            System.out.println("Enter room no: ");
+            boolean run = true;
+            while (run){
+                String roomNo = input.next();
+
+                for (Room room : hotel.getRoomList()) {
+                    if (Objects.equals(room.getRoomNo(), roomNo)) {
+                        if (room.isAvailable()) {
+                            bookedRoom = room;
+                            run = false;
+                            break;
+                        } else {
+                            System.out.println("This room is already booked.");
+                        }
+                    }
+                }
+                if(bookedRoom==null){
+                    System.out.println("Invalid room no.");
+                }
+                else {
+                    Reservation reservation = new Reservation(reservationID,customer,hotel,bookedRoom,
+                            checkInDate,checkOutDate,bookedRoom.getPrice());
+                    listOfreservations.add(reservation);
+                    System.out.println("Reservation Successful.");
+
+                }
+            }
+        }
+
+
 
     }
 }

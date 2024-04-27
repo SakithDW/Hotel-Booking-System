@@ -11,6 +11,19 @@ public abstract class Administrator {
         this.email = email;
     }
 
+    public String getAdminID() {
+        return adminID;
+    }
 
+    public String getName() {
+        return name;
+    }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }

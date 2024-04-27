@@ -1,4 +1,3 @@
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -10,9 +9,16 @@ public class Main {
     static ArrayList<Hotel>pendingList = new ArrayList<>();
     static ArrayList<Room> roomList = new ArrayList<>();
     static HashMap <String,String> usersDetails = new HashMap<>();
+    static HashMap <String,String> hotelAdminDetails = new HashMap<>();
     static ArrayList<Customer> customerList = new ArrayList<>();
-    static ArrayList<String> IDList = new ArrayList<>();
+    static ArrayList<String> customerIDList = new ArrayList<>();
+    static ArrayList<String> hotelIDList = new ArrayList<>();
     static ArrayList<String> amenities = new ArrayList<>();
+    static ArrayList<HotelAdmin> hotelAdminList = new ArrayList<>();
+    static ArrayList<String> hotelAdminIDList = new ArrayList<>();
+    static String sysAdminUsername = "Jothipala";
+    static String sysAdminPw = "1234567";
+
     public static void main(String[] args) {
         displayMenu();
     }
@@ -29,24 +35,27 @@ public class Main {
         int choice = Validation.intValidator(prompt,3,1);
         if(choice==1){
             System.out.println("WELCOME TO CUSTOMER PORTAL OF NEMO");
+            System.out.print("Have you registered your hotel?(Y/N)");
+            String yn = input.next();
             System.out.println();
-            System.out.println("Enter username");
-            String username = input.next();
-            System.out.println("Enter password");
-            String password = input.next();
+            if(yn.equalsIgnoreCase("y")){
+                System.out.println("Enter user ID");
+                String userID = input.next();
+                System.out.println("Enter password");
+                String password = input.next();
 
-            if(usersDetails.containsKey(username)){
-                if(Objects.equals(password, usersDetails.get(username))){
-                    for(Hotel hotel:hotelList){
-                        System.out.println(STR."1. \{hotel.getHotelName()}:");
-                        System.out.println("Amenities : ");
-                        int count=1;
-                        for (String  amenity: hotel.getAmenities()){
-                            System.out.println(STR."\{count}. \{amenity}");
-                            count++;
+                if(usersDetails.containsKey(userID)){
+                    if(Objects.equals(password, usersDetails.get(userID))){
+                        for(Hotel hotel:hotelList){
+                            System.out.println(STR."1. \{hotel.getHotelName()}:");
+                            System.out.println("Amenities : ");
+                            int count=1;
+                            for (String  amenity: hotel.getAmenities()){
+                                System.out.println(STR."\{count}. \{amenity}");
+                                count++;
+                            }
                         }
-                    }
-                    System.out.print("""
+                        System.out.print("""
                             1. Make a reservation.
                             2. Cancel a reservation.
                             3. See available rooms.
@@ -56,60 +65,177 @@ public class Main {
                             
                             Enter the choice:
                             """);
-                    String selection = input.next();
+                        int selection = Validation.intValidator("Enter the choice :", 5, 0);
 //                    switch (selection){
 //                        case 1 ->
 //                    }
-                }else{
-                    System.out.println("Incorrect password.Please recheck.");
-                }
-
-            }
-            else{
-                System.out.println("Invalid username. Register before login.");
-                while(true){
-                    System.out.println("Do you want to register?(Y/N)");
-                    String preference = input.next();
-                    if(!preference.equalsIgnoreCase("Y")||preference.equalsIgnoreCase("N")){
-                        System.out.println("Invalid input.");
+                    }else{
+                        System.out.println("Incorrect password.Please recheck.");
                     }
-                    else {
-                        if(preference.equalsIgnoreCase("Y")){
-                            userRegistration();
+
+                }
+                else{
+                    System.out.println("Invalid userID. Register before login.");
+                    while(true){
+                        System.out.println("Do you want to register?(Y/N)");
+                        String preference = input.next();
+                        if(!preference.equalsIgnoreCase("Y")||preference.equalsIgnoreCase("N")){
+                            System.out.println("Invalid input.");
                         }
                         else {
-                            break;
+                            if(preference.equalsIgnoreCase("Y")){
+                                userRegistration();
+                            }
+                            else {
+                                break;
+                            }
                         }
                     }
                 }
+            }else {
+                System.out.println("Register Your hotel");
+                registerHotel();
+            }
+
+
+        } else if (choice==2) {
+            System.out.println("WELCOME TO Hotel Admin PORTAL OF NEMO");
+            System.out.println();
+
+
+            System.out.println("Enter user ID");
+            String userID = input.next();
+            System.out.println("Enter password");
+            String password = input.next();
+            Hotel hotel = (getHotelFromAdminID(userID));
+
+
+            if(hotelAdminDetails.containsKey(userID)){
+                boolean run = true;
+                if(Objects.equals(password, hotelAdminDetails.get(userID))){
+                    while (run){
+                        System.out.println("""
+                                1. Add rooms
+                                2. Remove rooms
+                                3. Set prices
+                                4. Show Reservation Info
+                                0. Exit
+                                                            
+                                Enter the choice:
+                                """);
+                        int selection = Validation.intValidator("Enter the choice", 4, 0);
+                        switch (selection){
+                            case 0 -> run= false;
+                            case 1-> addRooms(hotel);
+
+                            case 2-> removeRoom(hotel);
+
+                            case 3 -> setPriceMap(hotel);
+
+                        }
+                    }
+                }
+                else {
+                    System.out.println("incorrect Password.");
+                }
+            }
+
+
+        }
+        else {
+            System.out.println("WELCOME TO SYSTEM ADMIN PORTAL\n");
+            while (true){
+                System.out.println("Enter your user name");
+                String username = input.next();
+                System.out.println("Enter your password");
+                String password = input.next();
+
+                if (Objects.equals(username, sysAdminUsername)) {
+                        if (Objects.equals(password, sysAdminPw)) {
+                            boolean run = true;
+                            while (run) {
+                                System.out.println("""
+                                        1.Review and Add Hotels
+                                        2.Review comments
+                                        0.exit
+                                        """);
+                                int selection = Validation.intValidator("Enter the choice: ",2,0);
+                                switch (selection){
+                                    case(1)-> reviewAndAddHotel();
+                                    case(0)-> run=false;
+                                }
+                            }
+                            break;
+
+                        }else {
+                            System.out.println("Invalid password.please re-enter.");
+                        }
+                } else {
+                    System.out.println("Invalid username. Please re-enter");
+                }
+            }
+
+
+        }
+
+    }
+    public static Hotel getHotelFromAdminID(String ID){
+        Hotel hotel = null;
+
+        for(HotelAdmin hotelAdmin : hotelAdminList){
+            if(Objects.equals(hotelAdmin.getAdminID(), ID)){
+                hotel = hotelAdmin.getHotel();
+                break;
             }
         }
 
+        return hotel;
+    }
+
+    public static void removeRoom(Hotel hotel){
+        System.out.print("Enter room no: ");
+        String roomNo = input.next();
+        hotel.getRoomList().removeIf(room -> Objects.equals(room.getRoomNo(), roomNo));
     }
     public static void  userRegistration(){
         System.out.print("Enter username: ");
         String username = input.next();
-        String customerID = Validation.IDGenerator("C",5,IDList);
+        String customerID = Validation.IDGenerator("C",5,customerIDList);
         System.out.print("Enter a strong password: ");
         String password = input.next();
         System.out.print("Enter email: ");
         String email = input.next();
         Customer customer = new Customer(customerID,username,password,email);
         customerList.add(customer);
-        usersDetails.put(username,password);
+        usersDetails.put(customerID,password);
+        System.out.println("Registration Successful");
+        System.out.println(STR."Your user ID is\{customerID}. \nPlease keep this in mind for later use.");
 
     }
 
-    public static void addHotel(){
+    public static void registerHotel(){
         System.out.print("Enter the name of the hotel : ");
         String hotelName = input.next();
-        String hotelID = Validation.IDGenerator("H",7,IDList);
+        String hotelID = Validation.IDGenerator("H",7,hotelIDList);
         System.out.print("Enter the address :");
         String address = input.next();
         Hotel hotel = new Hotel(hotelName,hotelID,address);
         hotel.setAmenities(enterAmenities());
         hotel.setRoomList(roomList);
         pendingList.add(hotel);
+        System.out.println("HOTEL ADMIN DETAILS");
+        System.out.print("Enter the username: ");
+        String username = input.next();
+        System.out.print("Enter the email: ");
+        String email = input.next();
+        System.out.print("Choose a password: ");
+        String password = input.next();
+        String ID = Validation.IDGenerator("HA",5,hotelAdminIDList);
+
+        HotelAdmin hotelAdmin = new HotelAdmin(ID,username,password,email);
+        hotelAdminDetails.put(username,password);
+        hotel.setHotelAdmin(hotelAdmin);
+        hotelAdmin.setHotel(hotel);
     }
 
     public static void addRooms(Hotel hotel){
@@ -209,16 +335,18 @@ public class Main {
         String combinedKey = category + capacity;
         if(hotel.getInfoMap().containsKey(combinedKey)){
             Room value = hotel.getInfoMap().get(combinedKey);
-            System.out.print("This category has already defined." +
-                    "\nDo you wish to edit this field.");
-            String choice = input.next().toLowerCase();
-            if(!(choice.equals("yes")||choice.equals("no"))){
-                System.out.println("Invalid input");
-            }
-            else {
-                if(choice.equalsIgnoreCase("yes")) {
-                    setMap(category, capacity, hotel);
-                    System.out.println("Field Updated Successfully.");
+            while (true){
+                System.out.print("This category has already defined." +
+                        "\nDo you wish to edit this field.");
+                String choice = input.next().toLowerCase();
+                if (!(choice.equals("yes") || choice.equals("no"))) {
+                    System.out.println("Invalid input");
+                } else {
+                    if (choice.equalsIgnoreCase("yes")) {
+                        setMap(category, capacity, hotel);
+                        System.out.println("Field Updated Successfully.");
+                    }
+                    break;
                 }
             }
         }
@@ -299,5 +427,8 @@ public class Main {
                     hotel.getInfoMap().put(key,premium);
                 }
             }
+    }
+    public static void makeReservation(){
+
     }
 }

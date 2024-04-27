@@ -11,6 +11,7 @@ public class Hotel {
     private String address;
     private ArrayList<String> amenities;
     private ArrayList<Room> roomList;
+    private HotelAdmin hotelAdmin;
 
 
 
@@ -69,6 +70,15 @@ public class Hotel {
     public void setRoomList(ArrayList<Room> roomList) {
         this.roomList = roomList;
     }
+
+    public HotelAdmin getHotelAdmin() {
+        return hotelAdmin;
+    }
+
+    public void setHotelAdmin(HotelAdmin hotelAdmin) {
+        this.hotelAdmin = hotelAdmin;
+    }
+
     public void printHotelDetails(){
         System.out.println(STR."Hotel name: \{hotelName}");
         System.out.println(STR."Hotel ID: \{hotelID}");

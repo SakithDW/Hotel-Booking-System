@@ -530,35 +530,37 @@ public class Main {
         if(!resIDList.contains(resID)){
             System.out.println("Invalid reservation ID");
         }
-        for(Reservation reservation: listOfReservations){
-            if(Objects.equals(reservation.getReservationID(), resID)){
-                if (Objects.equals(reservation.getCustomer().getCustomerID(), customer.getCustomerID())) {
-                    boolean run = true;
-                    while(run){
-                        System.out.println("Are you sure you want to cancel this reservation?(Y/N)");
-                        String choice = input.next();
-                        if (choice.equalsIgnoreCase("y")) {
-                            listOfReservations.remove(reservation);
-                            for(Hotel hotel:hotelList){
-                                if(hotel==reservation.getHotel()){
-                                    for (Room room:hotel.getRoomList()){
-                                        if(Objects.equals(room.getRoomNo(), reservation.getRoom().getRoomNo())){
-                                            room.setAvailable(true);
+        else {
+            for (Reservation reservation : listOfReservations) {
+                if (Objects.equals(reservation.getReservationID(), resID)) {
+                    if (Objects.equals(reservation.getCustomer().getCustomerID(), customer.getCustomerID())) {
+                        boolean run = true;
+                        while (run) {
+                            System.out.println("Are you sure you want to cancel this reservation?(Y/N)");
+                            String choice = input.next();
+                            if (choice.equalsIgnoreCase("y")) {
+                                listOfReservations.remove(reservation);
+                                for (Hotel hotel : hotelList) {
+                                    if (hotel == reservation.getHotel()) {
+                                        for (Room room : hotel.getRoomList()) {
+                                            if (Objects.equals(room.getRoomNo(), reservation.getRoom().getRoomNo())) {
+                                                room.setAvailable(true);
+                                            }
                                         }
                                     }
                                 }
+                                run = false;
+                            } else if (choice.equalsIgnoreCase("n")) {
+                                run = false;
+                            } else {
+                                System.out.println("Invalid Input.");
                             }
-                            run=false;
-                        } else if (choice.equalsIgnoreCase("n")){
-                            run = false;
-                        }else {
-                            System.out.println("Invalid Input.");
                         }
+                    } else {
+                        System.out.println("You are not allowed to cancel this reservation.");
                     }
-                }else {
-                    System.out.println("You are not allowed to cancel this reservation.");
+                    break;
                 }
-                break;
             }
         }
 

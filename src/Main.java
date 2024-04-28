@@ -1,6 +1,5 @@
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 public class Main {
@@ -17,14 +16,14 @@ public class Main {
     static ArrayList<String> amenities = new ArrayList<>();
     static ArrayList<HotelAdmin> hotelAdminList = new ArrayList<>();
     static ArrayList<String> hotelAdminIDList = new ArrayList<>();
-    static ArrayList<Reservation> listOfreservations = new ArrayList<>();
+    static ArrayList<Reservation> listOfReservations = new ArrayList<>();
     static String sysAdminUsername = "Jothipala";
     static String sysAdminPw = "1234567";
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) {
         displayMenu();
     }
-    public static void displayMenu() throws ParseException {
+    public static void displayMenu() {
         System.out.println("WELCOME TO NEMO");
         String prompt=("""
                 Select Options:
@@ -37,115 +36,132 @@ public class Main {
         int choice = Validation.intValidator(prompt,3,1);
         if(choice==1){
             System.out.println("WELCOME TO CUSTOMER PORTAL OF NEMO");
-            System.out.print("Have you registered your hotel?(Y/N)");
+            System.out.print("Are you a registered user?(Y/N)");
             String yn = input.next();
             System.out.println();
-            if(yn.equalsIgnoreCase("y")){
-                Customer customer=null;
-                System.out.println("Enter user email");
-                String email = input.next();
-                System.out.println("Enter password");
-                String password = input.next();
+            boolean run = true;
+            while (run){
+                if (yn.equalsIgnoreCase("y")) {
+                    Customer customer = null;
+                    System.out.println("Enter user email");
+                    String email = input.next();
+                    System.out.println("Enter password");
+                    String password = input.next();
 
-                if(usersDetails.containsKey(email)){
-                    if(Objects.equals(password, usersDetails.get(email))){
-                        for(Hotel hotel:hotelList){
-                            System.out.println(STR."1. \{hotel.getHotelName()}:");
-                            System.out.println("Amenities : ");
-                            int count=1;
-                            for (String  amenity: hotel.getAmenities()){
-                                System.out.println(STR."\{count}. \{amenity}");
-                                count++;
+                    if (usersDetails.containsKey(email)) {
+                        if (Objects.equals(password, usersDetails.get(email))) {
+                            for (Hotel hotel : hotelList) {
+                                System.out.println(STR."1. \{hotel.getHotelName()}:");
+                                System.out.println("Amenities : ");
+                                int count = 1;
+                                for (String amenity : hotel.getAmenities()) {
+                                    System.out.println(STR."\{count}. \{amenity}");
+                                    count++;
+                                }
                             }
-                        }
-                        for(Customer customer1: customerList){
-                            if(Objects.equals(customer1.getCustomerEmail(), email)){
-                                customer=customer1;
-                                break;
+                            for (Customer customer1 : customerList) {
+                                if (Objects.equals(customer1.getCustomerEmail(), email)) {
+                                    customer = customer1;
+                                    break;
+                                }
                             }
+                            System.out.print("""
+                                    1. Make a reservation.
+                                    2. Cancel a reservation.
+                                    3. See available rooms.
+                                    4. Show reservations.
+                                    5. See history
+                                    0. Exit
+                                                                
+                                    Enter the choice:
+                                    """);
+                            int selection = Validation.intValidator("Enter the choice :", 5, 0);
+                            switch (selection) {
+                                case 1 -> makeReservation(customer);
+                                case 2 -> cancelReservation(customer);
+                            }
+                        } else {
+                            System.out.println("Incorrect password.Please recheck.");
                         }
-                        System.out.print("""
-                            1. Make a reservation.
-                            2. Cancel a reservation.
-                            3. See available rooms.
-                            4. Show reservations.
-                            5. See history
-                            0. Exit
-                            
-                            Enter the choice:
-                            """);
-                        int selection = Validation.intValidator("Enter the choice :", 5, 0);
-                    switch (selection){
-                        case 1 -> makeReservation(customer);
-                    }
-                    }else{
-                        System.out.println("Incorrect password.Please recheck.");
-                    }
 
-                }
-                else{
-                    System.out.println("Invalid userID. Register before login.");
-                    while(true){
-                        System.out.println("Do you want to register?(Y/N)");
-                        String preference = input.next();
-                        if(!preference.equalsIgnoreCase("Y")||preference.equalsIgnoreCase("N")){
-                            System.out.println("Invalid input.");
-                        }
-                        else {
-                            if(preference.equalsIgnoreCase("Y")){
-                                userRegistration();
-                            }
-                            else {
-                                break;
+                    } else {
+                        System.out.println("Invalid userID. Register before login.");
+                        while (true) {
+                            System.out.println("Do you want to register?(Y/N)");
+                            String preference = input.next();
+                            if (!preference.equalsIgnoreCase("Y") || preference.equalsIgnoreCase("N")) {
+                                System.out.println("Invalid input.");
+                            } else {
+                                if (preference.equalsIgnoreCase("Y")) {
+                                    userRegistration();
+                                } else {
+                                    break;
+                                }
                             }
                         }
                     }
+                    run=false;
+                } else if(yn.equalsIgnoreCase("n")) {
+                    System.out.println("Customer Registration");
+                    userRegistration();
+                    run=false;
                 }
-            }else {
-                System.out.println("Register Your hotel");
-                registerHotel();
+                else {
+                    System.out.println("Invalid input. please enter Y/N.");
+                }
             }
 
 
         } else if (choice==2) {
             System.out.println("WELCOME TO Hotel Admin PORTAL OF NEMO");
             System.out.println();
+            System.out.println("Have you registered the hotel?(Y/N)");
+            String ch = input.next();
+            boolean runner =true;
+            while (runner){
+                if (ch.equalsIgnoreCase("y")) {
+                    System.out.println("Enter user ID");
+                    String userID = input.next();
+                    System.out.println("Enter password");
+                    String password = input.next();
+                    Hotel hotel = (getHotelFromAdminID(userID));
 
 
-            System.out.println("Enter user ID");
-            String userID = input.next();
-            System.out.println("Enter password");
-            String password = input.next();
-            Hotel hotel = (getHotelFromAdminID(userID));
+                    if (hotelAdminDetails.containsKey(userID)) {
+                        boolean run = true;
+                        if (Objects.equals(password, hotelAdminDetails.get(userID))) {
+                            while (run) {
+                                System.out.println("""
+                                        1. Add rooms
+                                        2. Remove rooms
+                                        3. Set prices
+                                        4. Show Reservation Info
+                                        0. Exit
+                                                                    
+                                        Enter the choice:
+                                        """);
+                                int selection = Validation.intValidator("Enter the choice", 4, 0);
+                                switch (selection) {
+                                    case 0 -> run = false;
+                                    case 1 -> addRooms(hotel);
 
+                                    case 2 -> removeRoom(hotel);
 
-            if(hotelAdminDetails.containsKey(userID)){
-                boolean run = true;
-                if(Objects.equals(password, hotelAdminDetails.get(userID))){
-                    while (run){
-                        System.out.println("""
-                                1. Add rooms
-                                2. Remove rooms
-                                3. Set prices
-                                4. Show Reservation Info
-                                0. Exit
-                                                            
-                                Enter the choice:
-                                """);
-                        int selection = Validation.intValidator("Enter the choice", 4, 0);
-                        switch (selection){
-                            case 0 -> run= false;
-                            case 1-> addRooms(hotel);
+                                    case 3 -> setPriceMap(hotel);
 
-                            case 2-> removeRoom(hotel);
-
-                            case 3 -> setPriceMap(hotel);
-
+                                }
+                            }
+                        } else {
+                            System.out.println("incorrect Password.");
                         }
                     }
-                }
-                else {
-                    System.out.println("incorrect Password.");
+                    runner=false;
+                } else if (ch.equalsIgnoreCase("n")) {
+                    System.out.println("Hotel Registration");
+                    registerHotel();
+                    runner=false;
+                } else {
+                    System.out.println("Invalid input. please enter Y/N.");
                 }
             }
 
@@ -437,64 +453,177 @@ public class Main {
                 }
             }
     }
-    public static void makeReservation(Customer customer) throws ParseException {
-        String reservationID = Validation.IDGenerator("re",5,resIDList);
-        System.out.println("Enter the hotel name");
-        String hotelName = input.next();
 
-        String date1 = (input.next());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date checkInDate = dateFormat.parse(date1);
+    public static void makeReservation(Customer customer) {
+        try {
+            String reservationID = Validation.IDGenerator("re", 5, resIDList);
 
-        System.out.print("Enter check-out date(YYYY-MM-DD): ");
-        String date2 = input.next();
-        Date checkOutDate = dateFormat.parse(date2);
+            System.out.println("Enter the hotel name:");
+            String hotelName = input.next();
 
-        Hotel hotel = null;
-        Room bookedRoom = null;
-        for(Hotel hotel1: hotelList){
-            if(Objects.equals(hotel1.getHotelName(), hotelName)){
-                hotel= hotel1;
+            System.out.println("Enter check-in date (YYYY-MM-DD): ");
+            String date1 = input.next();
+            Date checkInDate = parseDate(date1);
+
+            System.out.println("Enter check-out date (YYYY-MM-DD): ");
+            String date2 = input.next();
+            Date checkOutDate = parseDate(date2);
+
+            if (checkInDate == null || checkOutDate == null || checkOutDate.before(checkInDate)) {
+                System.out.println("Invalid date format or check-out date is before check-in date.");
+                return;
             }
-        }
-        if (hotel==null){
-            System.out.println("Invalid hotel name");
-        }
-        else {
-            System.out.print("Enter check-in date(YYYY-MM-DD): ");
 
-
+            Hotel hotel = findHotelByName(hotelName);
+            if (hotel == null) {
+                System.out.println("Invalid hotel name.");
+                return;
+            }
 
             System.out.println("Enter room no: ");
-            boolean run = true;
-            while (run){
-                String roomNo = input.next();
+            Room bookedRoom = findAvailableRoom(hotel);
 
-                for (Room room : hotel.getRoomList()) {
-                    if (Objects.equals(room.getRoomNo(), roomNo)) {
-                        if (room.isAvailable()) {
-                            bookedRoom = room;
-                            run = false;
-                            break;
-                        } else {
-                            System.out.println("This room is already booked.");
-                        }
+            Reservation reservation = new Reservation(reservationID, customer, hotel, bookedRoom,
+                    checkInDate, checkOutDate, bookedRoom.getPrice());
+            listOfReservations.add(reservation);
+            System.out.println("Reservation Successful.");
+            System.out.println(STR."Your reservation id is \{reservationID}");
+        } catch (ParseException e) {
+            System.out.println("Invalid date format.");
+        }
+    }
+
+    private static Date parseDate(String dateString) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.parse(dateString);
+    }
+
+    private static Hotel findHotelByName(String name) {
+        for (Hotel hotel : hotelList) {
+            if (hotel.getHotelName().equalsIgnoreCase(name)) {
+                return hotel;
+            }
+        }
+        return null;
+    }
+
+    private static Room findAvailableRoom(Hotel hotel) {
+        Scanner input = new Scanner(System.in);
+        while (true) {
+            String roomNo = input.next();
+            for (Room room : hotel.getRoomList()) {
+                if (room.getRoomNo().equals(roomNo)) {
+                    if (room.isAvailable()) {
+                        return room;
+                    } else {
+                        System.out.println("This room is already booked.");
+                        break;
                     }
                 }
-                if(bookedRoom==null){
-                    System.out.println("Invalid room no.");
+            }
+            System.out.println("Invalid room no or room is not available. Enter again:");
+        }
+    }
+    public  static void cancelReservation(Customer customer){
+        System.out.println("Enter the reservation ID");
+        String resID = input.next();
+        if(!resIDList.contains(resID)){
+            System.out.println("Invalid reservation ID");
+        }
+        for(Reservation reservation: listOfReservations){
+            if(Objects.equals(reservation.getReservationID(), resID)){
+                if (Objects.equals(reservation.getCustomer().getCustomerID(), customer.getCustomerID())) {
+                    boolean run = true;
+                    while(run){
+                        System.out.println("Are you sure you want to cancel this reservation?(Y/N)");
+                        String choice = input.next();
+                        if (choice.equalsIgnoreCase("y")) {
+                            listOfReservations.remove(reservation);
+                            for(Hotel hotel:hotelList){
+                                if(hotel==reservation.getHotel()){
+                                    for (Room room:hotel.getRoomList()){
+                                        if(Objects.equals(room.getRoomNo(), reservation.getRoom().getRoomNo())){
+                                            room.setAvailable(true);
+                                        }
+                                    }
+                                }
+                            }
+                            run=false;
+                        } else if (choice.equalsIgnoreCase("n")){
+                            run = false;
+                        }else {
+                            System.out.println("Invalid Input.");
+                        }
+                    }
+                }else {
+                    System.out.println("You are not allowed to cancel this reservation.");
                 }
-                else {
-                    Reservation reservation = new Reservation(reservationID,customer,hotel,bookedRoom,
-                            checkInDate,checkOutDate,bookedRoom.getPrice());
-                    listOfreservations.add(reservation);
-                    System.out.println("Reservation Successful.");
-
-                }
+                break;
             }
         }
 
-
-
     }
+
+    //    public static void makeReservation(Customer customer) throws ParseException {
+//        String reservationID = Validation.IDGenerator("re",5,resIDList);
+//        System.out.println("Enter the hotel name");
+//        String hotelName = input.next();
+//
+//        String date1 = (input.next());
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date checkInDate = dateFormat.parse(date1);
+//
+//        System.out.print("Enter check-out date(YYYY-MM-DD): ");
+//        String date2 = input.next();
+//        Date checkOutDate = dateFormat.parse(date2);
+//
+//        Hotel hotel = null;
+//        Room bookedRoom = null;
+//        for(Hotel hotel1: hotelList){
+//            if(Objects.equals(hotel1.getHotelName(), hotelName)){
+//                hotel= hotel1;
+//            }
+//        }
+//        if (hotel==null){
+//            System.out.println("Invalid hotel name");
+//        }
+//        else {
+//            System.out.print("Enter check-in date(YYYY-MM-DD): ");
+//
+//
+//
+//            System.out.println("Enter room no: ");
+//            boolean run = true;
+//            while (run){
+//                String roomNo = input.next();
+//
+//                for (Room room : hotel.getRoomList()) {
+//                    if (Objects.equals(room.getRoomNo(), roomNo)) {
+//                        if (room.isAvailable()) {
+//                            bookedRoom = room;
+//                            run = false;
+//                            break;
+//                        } else {
+//                            System.out.println("This room is already booked.");
+//                        }
+//                    }
+//                }
+//                if(bookedRoom==null){
+//                    System.out.println("Invalid room no.");
+//                }
+//                else {
+//                    Reservation reservation = new Reservation(reservationID,customer,hotel,bookedRoom,
+//                            checkInDate,checkOutDate,bookedRoom.getPrice());
+//                    listOfreservations.add(reservation);
+//                    System.out.println("Reservation Successful.");
+//
+//                }
+//            }
+//        }
+//
+//
+//
+//    }
+
+
 }

@@ -49,18 +49,24 @@ public class Validation {
             System.out.println("Invalid Input. Please re-enter.");
         }
     }
-    public static String IDGenerator(String startingChar,int IDLength,ArrayList<String>IDList){
-        StringBuilder productID = new StringBuilder();
-        productID.append(startingChar).append(" - ");
+    public static String IDGenerator(String startingChar, int IDLength, ArrayList<String> IDList) {
         Random random = new Random();
-        for(int i=0;i<IDLength;i++){
-            productID.append(random.nextInt(10));
-            if(!IDList.contains(productID.toString())){
-                break;
+        String productID;
+
+        do {
+            StringBuilder idBuilder = new StringBuilder();
+            idBuilder.append(startingChar).append(" - ");
+
+            for (int i = 0; i < IDLength; i++) {
+                idBuilder.append(random.nextInt(10)); // Append random digits between 0 to 9
             }
-        }
-        return productID.toString();
+
+            productID = idBuilder.toString();
+        } while (IDList.contains(productID));
+
+        return productID;
     }
+
     public static String enterOptions(String prompt, String arg1, String arg2, String arg3){
         System.out.print(prompt);
         String category = input.next();

@@ -19,4 +19,32 @@ public class Reservation {
         this.checkOutDate = checkOutDate;
         this.price = price;
     }
+
+    public String getReservationID() {
+        return reservationID;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public Hotel getHotel() {
+        return hotel;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public Date getCheckInDate() {
+        return checkInDate;
+    }
+
+    public Date getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public double getPrice() {
+        return price;
+    }
 }

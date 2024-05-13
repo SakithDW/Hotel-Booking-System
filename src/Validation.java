@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class Validation {
 
-    static Scanner input = new Scanner(System.in);
+    private static Scanner input = new Scanner(System.in);
     public static int intValidator(String prompt, int max, int min){
         while (true){
             try {

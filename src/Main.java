@@ -1,3 +1,4 @@
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -167,7 +168,7 @@ public class Main {
 
 
         }
-        else {
+        else if(choice==3){
             System.out.println("WELCOME TO SYSTEM ADMIN PORTAL\n");
             while (true){
                 System.out.println("Enter your user name");
@@ -199,8 +200,8 @@ public class Main {
                     System.out.println("Invalid username. Please re-enter");
                 }
             }
-
-
+        }else {
+            System.out.println("Please Enter a Valid Input");
         }
 
     }
@@ -221,6 +222,7 @@ public class Main {
         System.out.print("Enter room no: ");
         String roomNo = input.next();
         hotel.getRoomList().removeIf(room -> Objects.equals(room.getRoomNo(), roomNo));
+        writeToFile(hotel.getRoomList(),STR."\{hotel.getHotelName()}-rooms.txt");
     }
     public static void  userRegistration(){
         System.out.print("Enter username: ");
@@ -248,6 +250,8 @@ public class Main {
         hotel.setAmenities(enterAmenities());
         hotel.setRoomList(roomList);
         pendingList.add(hotel);
+        writeToFile(pendingList,"pending-hotels.txt");
+
         System.out.println("HOTEL ADMIN DETAILS");
         System.out.print("Enter the username: ");
         String username = input.next();
@@ -296,14 +300,20 @@ public class Main {
         if(category.equalsIgnoreCase("Standard")){
             Standard standard = new Standard(roomNo,capacity,description,price,true);
             hotel.getRoomList().add(standard);
+            writeToFile(hotel.getRoomList(),STR."\{hotel.getHotelName()}-rooms.txt");
+
 
         } else if(category.equalsIgnoreCase("Deluxe")){
             Deluxe deluxe = new Deluxe(roomNo,capacity,description,price,true);
             hotel.getRoomList().add(deluxe);
+            writeToFile(hotel.getRoomList(),STR."\{hotel.getHotelName()}-rooms.txt");
+
 
         }else if(category.equalsIgnoreCase("Premium")){
             Premium premium = new Premium(roomNo,capacity,description,price,true);
             hotel.getRoomList().add(premium);
+            writeToFile(hotel.getRoomList(),STR."\{hotel.getHotelName()}-rooms.txt");
+
         }
     }
 
@@ -336,6 +346,8 @@ public class Main {
                 if (choice.equalsIgnoreCase("yes")){
                     hotelList.add(hotel);
                     pendingList.remove(hotel);
+                    writeToFile(hotelList,"registered-hotels.txt");
+                    writeToFile(pendingList,"pending-hotels.txt");
                     System.out.print("Hotel added to the system successfully.");
                     break;
                 }
@@ -486,6 +498,8 @@ public class Main {
             Reservation reservation = new Reservation(reservationID, customer, hotel, bookedRoom,
                     checkInDate, checkOutDate, bookedRoom.getPrice());
             listOfReservations.add(reservation);
+            writeToFile(listOfReservations,"reservations.txt");
+
             System.out.println("Reservation Successful.");
             System.out.println(STR."Your reservation id is \{reservationID}");
         } catch (ParseException e) {
@@ -540,8 +554,9 @@ public class Main {
                             String choice = input.next();
                             if (choice.equalsIgnoreCase("y")) {
                                 listOfReservations.remove(reservation);
+                                writeToFile(listOfReservations,"reservations.txt");
                                 for (Hotel hotel : hotelList) {
-                                    if (hotel == reservation.getHotel()) {
+                                    if (Objects.equals(hotel.getHotelName(), reservation.getHotel().getHotelName())) {
                                         for (Room room : hotel.getRoomList()) {
                                             if (Objects.equals(room.getRoomNo(), reservation.getRoom().getRoomNo())) {
                                                 room.setAvailable(true);
@@ -565,6 +580,32 @@ public class Main {
         }
 
     }
+
+    public static <T> void writeToFile(ArrayList<T> list, String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            for (T element : list) {
+                writer.write(element.toString());
+                writer.newLine();
+            }
+            System.out.println(STR."ArrayList elements written to \{fileName} successfully.");
+        } catch (IOException e) {
+            System.err.println(STR."Error writing to file: \{e.getMessage()}");
+        }
+    }
+
+    public static <T> void loadFromFile(String fileName, ArrayList<T> list) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Assuming each line contains a single element
+                list.add((T) line); // Cast to generic type T
+            }
+            System.out.println(STR."ArrayList loaded from \{fileName} successfully.");
+        } catch (IOException e) {
+            System.err.println(STR."Error reading from file: \{e.getMessage()}");
+        }
+    }
+
 
     //    public static void makeReservation(Customer customer) throws ParseException {
 //        String reservationID = Validation.IDGenerator("re",5,resIDList);

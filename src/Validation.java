@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class Validation {
 
-    static Scanner input = new Scanner(System.in);
+    private static Scanner input = new Scanner(System.in);
     public static int intValidator(String prompt, int max, int min){
         while (true){
             try {
@@ -49,25 +49,31 @@ public class Validation {
             System.out.println("Invalid Input. Please re-enter.");
         }
     }
-    public static String IDGenerator(String startingChar,int IDLength,ArrayList<String>IDList){
-        StringBuilder productID = new StringBuilder();
-        productID.append(startingChar).append(" - ");
+    public static String IDGenerator(String startingChar, int IDLength, ArrayList<String> IDList) {
         Random random = new Random();
-        for(int i=0;i<IDLength;i++){
-            productID.append(random.nextInt(10));
-            if(!IDList.contains(productID.toString())){
-                break;
+        String productID;
+
+        do {
+            StringBuilder idBuilder = new StringBuilder();
+            idBuilder.append(startingChar).append(" - ");
+
+            for (int i = 0; i < IDLength; i++) {
+                idBuilder.append(random.nextInt(10)); // Append random digits between 0 to 9
             }
-        }
-        return productID.toString();
+
+            productID = idBuilder.toString();
+        } while (IDList.contains(productID));
+
+        return productID;
     }
-    public static String enterRoomCategory(){
-        System.out.print("Enter room category(Standard, Deluxe, Premium): ");
+
+    public static String enterOptions(String prompt, String arg1, String arg2, String arg3){
+        System.out.print(prompt);
         String category = input.next();
         while (true){
-            if (category.equalsIgnoreCase("Standard") ||
-                    category.equalsIgnoreCase("Deluxe") ||
-                    category.equalsIgnoreCase("Premium")) {
+            if (category.equalsIgnoreCase(arg1) ||
+                    category.equalsIgnoreCase(arg2) ||
+                    category.equalsIgnoreCase(arg3)) {
                 break;
             }
             else{
@@ -77,22 +83,22 @@ public class Validation {
         return category;
     }
 
-    public static String enterCapacity(){
-        System.out.print("Enter capacity(Single, Double, Family): ");
-        String capacity = input.next();
-        while (true){
-            if (capacity.equalsIgnoreCase("Single") ||
-                    capacity.equalsIgnoreCase("Double") ||
-                    capacity.equalsIgnoreCase("Family")) {
-                break;
-            }
-            else{
-                System.out.println("Invalid input.");
-            }
-        }
-        return capacity;
-
-    }
+//    public static String enterCapacity(){
+//        System.out.print("Enter capacity(Single, Double, Family): ");
+//        String capacity = input.next();
+//        while (true){
+//            if (capacity.equalsIgnoreCase("Single") ||
+//                    capacity.equalsIgnoreCase("Double") ||
+//                    capacity.equalsIgnoreCase("Family")) {
+//                break;
+//            }
+//            else{
+//                System.out.println("Invalid input.");
+//            }
+//        }
+//        return capacity;
+//
+//    }
 
 
 }

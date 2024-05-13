@@ -8,6 +8,13 @@ public class Customer {
     private ArrayList<Review> reviews;
     private ArrayList<Reservation> reservations;
 
+    public Customer(String customerID,  String customerName,String password, String customerEmail) {
+        this.customerID = customerID;
+        this.password = password;
+        this.customerName = customerName;
+        this.customerEmail = customerEmail;
+    }
+
     public String getCustomerID() {
         return customerID;
     }

@@ -1,3 +1,5 @@
+import rooms.Room;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +79,7 @@ public class Hotel {
         for(String amenity: amenities){
             System.out.println(amenity);
         }
-        System.out.println(STR."Room Count : \{roomList.size()}");
+        System.out.println(STR."rooms.Room Count : \{roomList.size()}");
     }
 
 

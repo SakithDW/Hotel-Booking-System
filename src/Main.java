@@ -1,5 +1,13 @@
+import rooms.Deluxe;
+import rooms.Premium;
+import rooms.Room;
+import rooms.Standard;
+import validation.Validation;
+
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static java.lang.StringTemplate.STR;
 
 public class Main {
     static Scanner input = new Scanner(System.in);
@@ -29,18 +37,17 @@ public class Main {
         hotel.setRoomList(roomList);
         pendingList.add(hotel);
     }
-
     public void addRooms(Hotel hotel){
         String type = Validation.enterRoomCategory();
         StringBuilder combinedKey = new StringBuilder();
         String startingChar="";
         combinedKey.append(type);
 
-        if(type.equalsIgnoreCase("Standard")){
+        if(type.equalsIgnoreCase("rooms.Standard")){
             startingChar +="SR";
-        } else if (type.equalsIgnoreCase("Deluxe")) {
+        } else if (type.equalsIgnoreCase("rooms.Deluxe")) {
             startingChar += "DR";
-        } else if(type.equalsIgnoreCase("Premium")){
+        } else if(type.equalsIgnoreCase("rooms.Premium")){
             startingChar += "PR";
         }
         ArrayList<String> IDList = new ArrayList<>();
@@ -61,12 +68,12 @@ public class Main {
         String roomNo= Validation.IDGenerator(startingChar,5,IDList);
 
         Room roomInfo = hotel.getInfoMap().get(combinedKey.toString());
-        if(type.equalsIgnoreCase("Standard")){
+        if(type.equalsIgnoreCase("rooms.Standard")){
             Standard standard = new Standard(roomNo,roomInfo.getCapacity(),roomInfo.getDescription(),
                     roomInfo.getPrice(),true);
             hotel.getRoomList().add(standard);
         }
-        else if(type.equalsIgnoreCase("Deluxe")){
+        else if(type.equalsIgnoreCase("rooms.Deluxe")){
             Deluxe deluxe = new Deluxe(roomNo,roomInfo.getCapacity(),roomInfo.getDescription(),
                     roomInfo.getPrice(),true);
             hotel.getRoomList().add(deluxe);
@@ -77,7 +84,6 @@ public class Main {
             hotel.getRoomList().add(premium);
         }
     }
-
     public ArrayList<String> enterAmenities(){
         int count = 1;
         while(true){
@@ -94,8 +100,6 @@ public class Main {
         }
         return amenities;
     }
-
-
     public void reviewAndAddHotel(){
         boolean on = true;
         while (on) {

@@ -1,3 +1,5 @@
+package staff;
+
 public abstract class Administrator {
     private String adminID;
     private String name;

@@ -1,3 +1,5 @@
+package validation;
+
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
@@ -62,12 +64,12 @@ public class Validation {
         return productID.toString();
     }
     public static String enterRoomCategory(){
-        System.out.print("Enter room category(Standard, Deluxe, Premium): ");
+        System.out.print("Enter room category(rooms.Standard, rooms.Deluxe, rooms.Premium): ");
         String category = input.next();
         while (true){
-            if (category.equalsIgnoreCase("Standard") ||
-                    category.equalsIgnoreCase("Deluxe") ||
-                    category.equalsIgnoreCase("Premium")) {
+            if (category.equalsIgnoreCase("rooms.Standard") ||
+                    category.equalsIgnoreCase("rooms.Deluxe") ||
+                    category.equalsIgnoreCase("rooms.Premium")) {
                 break;
             }
             else{

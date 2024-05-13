@@ -1,3 +1,5 @@
+package rooms;
+
 public class Deluxe extends Room{
 
     public Deluxe(String roomNo, String capacity, String description, double price, boolean available) {

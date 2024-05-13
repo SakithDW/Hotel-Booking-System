@@ -1,3 +1,5 @@
+package rooms;
+
 public abstract class Room {
     private String roomNo;
     private String capacity;

@@ -1,13 +1,18 @@
-import java.util.Scanner;
+package staff;
 
-import static java.lang.StringTemplate.STR;
+import rooms.Deluxe;
+import rooms.Premium;
+import rooms.Standard;
+import validation.Validation;
+
+import java.util.Scanner;
 
 public class HotelAdmin extends Administrator{
     private Hotel hotel;
 
     static Scanner input = new Scanner(System.in);
 
-    public HotelAdmin(String adminID, String name, String password, String email,Hotel hotel) {
+    public HotelAdmin(String adminID, String name, String password, String email, Hotel hotel) {
         super(adminID, name, password, email);
         this.hotel = hotel;
     }
@@ -41,9 +46,9 @@ public class HotelAdmin extends Administrator{
             System.out.println("New Field Added Successfully.");
         }
     }
-    public void setMap(String category,String capacity,Hotel hotel){
+    public void setMap(String category, String capacity, Hotel hotel){
         double price;
-        if(category.equals("Standard")){
+        if(category.equals("rooms.Standard")){
             if(capacity.equals("Single")){
                 System.out.println("Add a description: ");
                 String description = input.next();
@@ -66,7 +71,7 @@ public class HotelAdmin extends Administrator{
                 hotel.getInfoMap().put(category,standard);
             }
         }
-        else if(category.equals("Deluxe")){
+        else if(category.equals("rooms.Deluxe")){
             if(capacity.equals("Single")){
                 System.out.println("Add a description: ");
                 String description = input.next();
